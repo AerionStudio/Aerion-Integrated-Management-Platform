@@ -1,0 +1,36 @@
+@font-face {
+    font-family: 'default';
+    src: url("../assets/default.woff2");
+}
+
+@font-face {
+    font-family: 'edix';
+    src: url("../assets/EDIX.ttf");
+}
+
+body {
+    font-family: 'default';
+}
+
+h1, h2, h3 {
+    font-family: 'default';
+}
+
+.collapse-button {
+    font-family: edix;
+}
+.logo-text{
+    font-family: edix;
+}
+body {
+    overflow-y: hidden;
+}
+
+.el-card{
+    border-radius: 20px
+}
+.el-card:hover {
+    transform: translateY(-10px); /* Move the card upwards by 20px */
+    transition: transform 0.5s ease; /* Apply a smooth transition */
+}
+

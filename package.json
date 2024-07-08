@@ -1,0 +1,32 @@
+{
+  "name": "aimp-v1.0",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
+    "@turf/turf": "^6.5.0",
+    "axios": "^1.6.8",
+    "boxicons": "^2.1.4",
+    "chart.js": "^4.4.2",
+    "echarts": "^5.5.0",
+    "element-plus": "^2.5.5",
+    "kuan-vue-flip-clock": "^1.0.1",
+    "mapbox-gl": "^3.4.0",
+    "vue": "^3.3.11",
+    "vue-chartjs": "^5.3.1",
+    "vue-flip-countdown": "^0.0.3",
+    "vue-router": "^4.3.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.5.2",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8",
+    "vue-tsc": "^1.8.25"
+  }
+}
