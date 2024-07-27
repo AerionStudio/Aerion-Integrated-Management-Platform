@@ -92,7 +92,7 @@ export default defineComponent({
       const connect = this.ctr_connect;
       const reason = this.ctr_reason;
       console.log(reason);
-      if (en != null&& experience != null && onlinetime != null && connect != null && reason != null) {
+      if (en != null && experience != null && onlinetime != null && connect != null && reason != null) {
         const data = {
           token: 'ab321818',
           cid: this.user_num,
@@ -140,7 +140,7 @@ export default defineComponent({
       const connect = this.app_connect;
       const reason = this.app_reason;
       console.log(reason);
-      if (en != null&& experience != null && onlinetime != null && connect != null && reason != null) {
+      if (en != null && experience != null && onlinetime != null && connect != null && reason != null) {
 
         const data = {
           token: 'ab321818',
@@ -177,7 +177,7 @@ export default defineComponent({
               this.showErrorNotification('提交失败，请重试');
             });
 
-      }else {
+      } else {
         this.showErrorNotification("请输入所有数据");
       }
 

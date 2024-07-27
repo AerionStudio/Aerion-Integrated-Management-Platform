@@ -1,8 +1,37 @@
 <?php
-error_reporting(0);
 header("Content-Type: application/json");
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: Content-Type");
+
+// 检查请求的来源
+$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+
+// 允许特定域名跨域访问
+$allowed_origins = ['http://localhost:5173', 'https://v4.ariven.cn', 'https://imp.skydreamclub.cn', 'http://imp.skydreamclub.cn'];
+
+if (in_array($origin, $allowed_origins)) {
+    header("Access-Control-Allow-Origin: $origin");
+    header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization");
+    header("Access-Control-Allow-Credentials: true");
+
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        // Handle preflight request
+        header('HTTP/1.1 200 OK');
+        exit();
+    }
+} else {
+    // If origin is not allowed, return a 403 Forbidden response
+    http_response_code(403);
+    echo json_encode(array('status' => '403', 'code' => '不允许的来源'));
+    exit();
+}
+
+// 如果是OPTIONS请求（预检请求），直接返回200 OK
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+include 'setting.php';
 $num = $_GET['callsign'];
 if (isset($num)) {
 

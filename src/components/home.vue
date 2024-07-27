@@ -48,8 +48,8 @@
             <el-col :span="8">
               <div class="grid-content ep-bg-purple"/>
               <el-card class="rounded-card" style="background: #1CBCE8;">
-                <span class="num">{{ onlinenum }}</span><br>
-                <span class="title-2">连线次数</span>
+                <span class="num">{{ integral }} 元</span><br>
+                <span class="title-2">天梦财富</span>
               </el-card>
             </el-col>
           </el-row>
@@ -98,8 +98,8 @@
           </el-header>
           <el-card class="rounded-card "> <!-- 添加一个新的类名 -->
             <el-table :data="tableData" style="width: 100%" height="470">
-              <el-table-column fixed prop="rank" label="排序" width="110"/>
-              <el-table-column prop="CID" label="用户" width="190">
+              <el-table-column fixed prop="rank" label="排序" />
+              <el-table-column prop="CID" label="用户">
                 <template v-slot="scope">
                   <el-tooltip
                       class="box-item"
@@ -112,7 +112,7 @@
                   </el-tooltip>
                 </template>
               </el-table-column>
-              <el-table-column prop="Online_Time_Hours" label="时长" width="190"/>
+              <el-table-column prop="Online_Time_Hours" label="时长" />
             </el-table>
           </el-card>
         </el-col>
@@ -264,6 +264,7 @@ export default {
     return {
       tableData: [],
       user_num: sessionStorage.getItem("user_num"),
+      integral: sessionStorage.getItem("integral"),
       countUser: '加载中...',
       countAtc: '加载中...',
       countEvent: '加载中...',

@@ -27,35 +27,35 @@
             </el-icon>
             <span v-if="!isCollapsed">在线地图</span>
           </el-menu-item>
-          <el-menu-item index="4" @click="navigateTo($router, '/chart')">
-            <el-icon>
-              <Picture />
-            </el-icon>
-            <span v-if="!isCollapsed">航图查询</span>
-          </el-menu-item>
-          <el-menu-item index="5" @click="navigateTo($router, '/weather')">
+          <el-menu-item index="4" @click="navigateTo($router, '/weather')">
             <el-icon>
               <WindPower/>
             </el-icon>
             <span v-if="!isCollapsed">天气查询</span>
           </el-menu-item>
-          <el-menu-item index="6" @click="navigateTo($router, '/route')">
+          <el-menu-item index="5" @click="navigateTo($router, '/route')">
             <el-icon>
               <Place/>
             </el-icon>
             <span v-if="!isCollapsed">航路查询</span>
           </el-menu-item>
-          <el-menu-item index="7" @click="navigateTo($router, '/atc')">
+          <el-menu-item index="6" @click="navigateTo($router, '/atc')">
             <el-icon>
               <Service/>
             </el-icon>
             <span v-if="!isCollapsed">管制局</span>
           </el-menu-item>
-          <el-menu-item index="8" @click="navigateTo($router, '/join')">
+          <el-menu-item index="7" @click="navigateTo($router, '/join')">
             <el-icon>
               <Plus/>
             </el-icon>
             <span v-if="!isCollapsed">加入我们</span>
+          </el-menu-item>
+          <el-menu-item index="8" @click="navigateTo($router, '/download')">
+            <el-icon>
+              <Download/>
+            </el-icon>
+            <span v-if="!isCollapsed">下载</span>
           </el-menu-item>
           <el-menu-item index="9" @click="navigateTo($router, '/gradelist')">
             <el-icon>

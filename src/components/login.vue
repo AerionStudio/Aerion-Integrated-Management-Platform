@@ -23,6 +23,9 @@
             <el-form-item label="密码" prop="password">
               <el-input type="password" v-model="loginForm.password" placeholder="请输入密码"></el-input>
             </el-form-item>
+            <el-form-item>
+              <el-checkbox v-model="loginForm.rememberMe">记住密码</el-checkbox>
+            </el-form-item>
             <br> <br>
             <el-form-item>
               <el-button type="primary" @click="login" style="width: 100%">登录</el-button>
@@ -103,11 +106,10 @@
   </div>
 
 </template>
-
 <script>
 import Loading from "./loading.vue";
 import {User} from "@element-plus/icons-vue";
-import {ElMessage} from 'element-plus'
+import {ElMessage} from 'element-plus';
 import axios from "axios";
 
 export default {
@@ -117,7 +119,8 @@ export default {
     return {
       loginForm: {
         username: '',
-        password: ''
+        password: '',
+        rememberMe: false
       },
       icp:'http://beian.miit.gov.cn',
       RegForm: {
@@ -141,7 +144,6 @@ export default {
       errorMessage: '' // 添加一个用于存储错误消息的变量
     };
   },
-
   methods: {
     changesta() {
       sessionStorage.setItem('isLoggedIn', false)
@@ -188,15 +190,22 @@ export default {
               sessionStorage.setItem('user_num', user_num);
               sessionStorage.setItem("user_grade", data.data.grade);
               sessionStorage.setItem("user_email", data.data.email);
-              sessionStorage.setItem("user_email", data.data.email);
+              sessionStorage.setItem("integral", data.data.integral);
               sessionStorage.setItem("user_qq", data.data.qq);
+
+              if (this.loginForm.rememberMe) {
+                localStorage.setItem('user_num', user_num);
+                localStorage.setItem('user_pwd', user_pwd);
+              } else {
+                localStorage.removeItem('user_num');
+                localStorage.removeItem('user_pwd');
+              }
+
               this.$router.push('/');
             } else {
               alert("账号/密码错误");
             }
-
           })
-
           .catch((error) => {
             console.error('Error:', error.message);
             alert("账号/密码错误");
@@ -214,7 +223,6 @@ export default {
       if (this.inputTimeoutqq) {
         clearTimeout(this.inputTimeoutqq);
       }
-
       // 设置一个新的timeout，在用户停止输入500毫秒后调用checkQQnum方法
       this.inputTimeoutqq = setTimeout(() => {
         this.checkQQ(this.RegForm.qq);
@@ -224,7 +232,6 @@ export default {
       if (this.inputTimeoutemail) {
         clearTimeout(this.inputTimeoutemail);
       }
-
       // 设置一个新的timeout，在用户停止输入500毫秒后调用checkQQnum方法
       this.inputTimeoutemail = setTimeout(() => {
         this.checkemail(this.RegForm.email);
@@ -238,7 +245,6 @@ export default {
               alert("此呼号已被注册");
               this.RegForm.usernum = null;
             } else {
-
               this.$message({
                 message: '该呼号可用',
                 type: 'success'
@@ -261,7 +267,6 @@ export default {
               alert("此QQ已被注册");
               this.RegForm.qq = null;
             } else {
-
               this.$message({
                 message: '该呼号可用',
                 type: 'success'
@@ -284,7 +289,6 @@ export default {
               alert("此邮箱已被注册");
               this.RegForm.email = null;
             } else {
-
               this.$message({
                 message: '该呼号可用',
                 type: 'success'
@@ -318,7 +322,7 @@ export default {
             console.error('Error fetching captcha:', error);
           });
     },
-    sendcapnumfor() {
+    sendcapnumfor(){
       let url = 'https://server.skydreamclub.cn/captcha.php?email=' + this.ForForm.email + '&user=xxxx' + this.ForForm.email;
       fetch(url)
           .then(response => response.json())
@@ -337,6 +341,25 @@ export default {
             console.error('Error fetching captcha:', error);
           });
     },
+    checkcode(){
+      let url='https://server.skydreamclub.cn/FindPwdCheckCode.php';
+      axios.post(url, {
+        token: 'ab321818',
+        user_email: this.ForForm.email,
+        code: this.ForForm.capnum
+      }).then(response=>{
+        if(response.data.status=='200'){
+          this.$alert('<h1>系统已验证</h1><br>新密码为<br>'+response.data.pwd, '找回密码',{
+            dangerouslyUseHTMLString:true,
+            confirmButtonText:'确定',
+          });
+        }
+        else{
+          alert("验证码错误或已失效");
+        }
+      })
+    },
+    
     reg() {
       if (this.RegForm.qq != null && this.RegForm.email != null && this.RegForm.usernum != null && this.RegForm.password != null && this.RegForm.capnum != null) {
         if (this.RegForm.capnum == sessionStorage.getItem("capnum")) {
@@ -421,11 +444,17 @@ export default {
     },
   },
   mounted() {
-    this.changesta();
-  },
+    const rememberedUsername = localStorage.getItem('user_num');
+    const rememberedPassword = localStorage.getItem('user_pwd');
+    if (rememberedUsername && rememberedPassword) {
+      this.loginForm.username = rememberedUsername;
+      this.loginForm.password = rememberedPassword;
+      this.loginForm.rememberMe = true;
+    }
+  }
 };
-
 </script>
+
 
 <style scoped>
 .login-container {

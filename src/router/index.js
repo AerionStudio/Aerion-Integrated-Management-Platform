@@ -106,6 +106,11 @@ const routes = [
         name: 'join',
         component: ()=>import('../components/join.vue')
     },
+    {
+        path: '/download',
+        name: 'download',
+        component: ()=>import('../components/download.vue')
+    },
     // 将通配符路径重定向到 /error
     {
         path: '/:pathMatch(.*)*',

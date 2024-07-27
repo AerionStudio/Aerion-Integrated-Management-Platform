@@ -1,7 +1,7 @@
 <script>
 
 
-import {useRoute} from "vue-router";
+import { useRoute } from "vue-router";
 import axios from "axios";
 
 export default {
@@ -22,6 +22,7 @@ export default {
       filghtimage: null,
       flightdata: null,
       atcdata: null,
+      integral: 0,
     };
   },
 
@@ -90,6 +91,7 @@ export default {
 
             var flightTimeInSeconds = data.online_time.flight;
             this.getflightgradeimage(flightTimeInSeconds);
+            this.getIntegral(flightTimeInSeconds);
             var flightTimeInHours = flightTimeInSeconds / 3600;
             this.flighttime = flightTimeInHours.toFixed(1) + " 小时";
             var atcTimeInSeconds = data.online_time.atc;
@@ -164,6 +166,31 @@ export default {
         console.error('Error fetching event data:', error);
       }
     },
+    async getIntegral(time) {
+      try {
+        const response = await axios.get(
+            "https://server.skydreamclub.cn/GetUserIntegralData.php",
+            {
+              params: {
+                callsign: this.usernum,
+                time: time,
+              },
+            }
+        );
+        const data = response.data;
+        console.log(data);
+        this.integral = data.integral;
+        this.Hourlywages = data.Hourlywages;
+      } catch (error) {
+        console.error("Error fetching event data:", error);
+      }
+    },
+    formatTime(seconds) {
+      let hours = Math.floor(seconds / 3600);
+      let minutes = Math.floor((seconds % 3600) / 60);
+      let secs = seconds % 60;
+      return `${hours}小时${minutes}分钟${secs}秒`;
+    },
   },
 
   mounted() {
@@ -171,7 +198,7 @@ export default {
     const id = route.params.id;
     if (id) {
       this.receivedId = id;
-      this.usernum=id;
+      this.usernum = id;
       this.getuserdata();
       this.getdetaildata();
       this.GetUserTime();
@@ -195,48 +222,92 @@ export default {
   </div>
   <transition name="el-fade-in-linear">
     <div v-show="main">
-  <el-card
-      style="text-align: center;background: linear-gradient(90deg, #86d0d1,#009eff,#1134ff); display: flex; flex-direction: column; align-items: center;">
-    <br><br>
-    <el-avatar :src=userqqimage :size="130"/>
-    <h1 style="font-size: 25px;color: #ffffff">{{ receivedId }} | {{ usergradetext }}</h1><br>
-    <div style="display: flex; align-items: center; justify-content: center; color: #ffffff;font-size: 30px;">
-      <img :src=filghtimage style="width: 150px; margin-right: 5px;" alt="">
-      <span>|</span>
-      <img :src=atcimage style="width: 150px; margin-left: 5px;" alt="">
-    </div>
-  </el-card>
-  <br>
-  <el-row :gutter="20" class="dashboard">
-    <el-col :span="8">
-      <div class="grid-content ep-bg-purple"/>
-      <el-card class="rounded-card" style="background:#1F91DC;color: #ffffff;font-size: 35px">
-        <span class="num">{{ flighttime }}</span><br>
-        <span class="title-2">飞行时长</span>
+      <el-card
+          style="text-align: center;background: linear-gradient(90deg, #86d0d1,#009eff,#1134ff); display: flex; flex-direction: column; align-items: center;">
+        <br><br>
+        <el-avatar :src=userqqimage :size="130"/>
+        <h1 style="font-size: 25px;color: #ffffff">{{ receivedId }} | {{ usergradetext }}</h1><br>
+        <div style="display: flex; align-items: center; justify-content: center; color: #ffffff;font-size: 30px;">
+          <img :src=filghtimage style="width: 150px; margin-right: 5px;" alt="">
+          <span>|</span>
+          <img :src=atcimage style="width: 150px; margin-left: 5px;" alt="">
+        </div>
       </el-card>
-    </el-col>
-    <el-col :span="8">
-      <div class="grid-content ep-bg-purple"/>
-      <el-card class="rounded-card" style="background: #009eff;color: #ffffff;font-size: 35px">
-        <span class="num">{{ atctime }}</span><br>
-        <span class="title-2"> 管制时长</span>
+      <br>
+      <el-row :gutter="20" class="dashboard">
+        <el-col :span="8">
+          <div class="grid-content ep-bg-purple"/>
+          <el-card class="rounded-card" style="background:#1F91DC;color: #ffffff;font-size: 35px">
+            <span class="num">{{ flighttime }}</span><br>
+            <span class="title-2">飞行时长</span>
+          </el-card>
+        </el-col>
+        <el-col :span="8">
+          <div class="grid-content ep-bg-purple"/>
+          <el-card class="rounded-card" style="background: #009eff;color: #ffffff;font-size: 35px">
+            <span class="num">{{ atctime }}</span><br>
+            <span class="title-2"> 管制时长</span>
+          </el-card>
+        </el-col>
+        <el-col :span="8">
+          <div class="grid-content ep-bg-purple"/>
+          <el-card class="rounded-card" style="background: #1CBCE8;color: #ffffff;font-size: 35px">
+            <span class="num">{{ integral }} 元</span><br>
+            <span class="title-2">天梦财富</span>
+          </el-card>
+        </el-col>
+      </el-row>
+      <br>
+      <el-card><br>
+        <el-header class="el-header" style="margin-bottom: 10px; font-size: 25px">
+          <el-icon class="icon-1">
+            <position/>
+          </el-icon>
+          飞行记录
+        </el-header>
+        <br>
+        <el-table :data="flightdata" border style="width: 100%; height: 250px">
+          <el-table-column prop="client_name" label="呼号"/>
+          <el-table-column prop="depairport" label="起飞机场"/>
+          <el-table-column prop="destairport" label="落地机场"/>
+          <el-table-column prop="aircraft" label="机型"/>
+          <el-table-column prop="time" label="飞行时间"/>
+          <el-table-column prop="online_time" label="飞行时长">
+            <template v-slot="scope">
+              {{ formatTime(scope.row.online_time) }}
+            </template>
+          </el-table-column>
+        </el-table>
       </el-card>
-    </el-col>
-    <el-col :span="8">
-      <div class="grid-content ep-bg-purple"/>
-      <el-card class="rounded-card" style="background: #1CBCE8;color: #ffffff;font-size: 35px">
-        <span class="num">{{ onlinenum }}</span><br>
-        <span class="title-2">连线次数</span>
+      <br>
+      <el-card><br/>
+        <el-header class="el-header" style="margin-bottom: 10px; font-size: 25px">
+          <el-icon class="icon-1">
+            <service/>
+          </el-icon>
+          管制记录
+        </el-header>
+        <br/>
+        <el-table :data="atcdata" border style="width: 100%; height: 226px">
+          <el-table-column prop="callsign" label="席位"/>
+          <el-table-column prop="frequency" label="频率"/>
+          <el-table-column prop="logon_time" label="管制时间"/>
+          <el-table-column prop="online_time" label="管制时长">
+            <template v-slot="scope">
+              {{ formatTime(scope.row.online_time) }}
+            </template>
+          </el-table-column>
+        </el-table>
       </el-card>
-    </el-col>
-  </el-row>
     </div>
   </transition>
 </template>
 
 <style scoped>
 .el-card:hover {
-  transform: translateY(-10px); /* Move the card upwards by 20px */
-  transition: transform 0.5s ease; /* Apply a smooth transition */
+  transform: translateY(-10px);
+  /* Move the card upwards by 20px */
+  transition: transform 0.5s ease;
+  /* Apply a smooth transition */
 }
 </style>
